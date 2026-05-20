@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regalos para la más chiquita 💖</title>
+    <title>Cupones: Apertura de Regalos Sorpresa 💖</title>
     <style>
         :root {
             /* Paleta minimalista de cumpleaños y amor */
@@ -13,6 +13,22 @@
             --card-bg: rgba(255, 255, 255, 0.9);
             --accent-color: #ff85a2; /* Rosa pastel romántico */
             --border-color: #fbd3db;
+
+            /* Colores adaptados para los sobres tiernos */
+            --envelope-color: #ffb3c1;
+            --envelope-inside: #ffccd5;
+            --flap-color: #ff85a2;
+            
+            /* Colores de las tarjetas interiores */
+            --card-border-blue: #a2d2ff; 
+            --card-border-gold: #ffb703; 
+            
+            --card-bg-blue: linear-gradient(135deg, #f0f8ff 0%, #e1f5fe 50%, #a2d2ff 100%);
+            --card-bg-gold: linear-gradient(135deg, #fff9db 0%, #fff3bf 50%, #ffe3a8 100%);
+            
+            /* Resplandores mágicos sutiles */
+            --epic-glow-blue: 0 10px 40px rgba(162, 210, 255, 0.6);
+            --epic-glow-gold: 0 10px 45px rgba(255, 183, 3, 0.7);
         }
 
         body {
@@ -22,94 +38,457 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
             overflow-x: hidden;
             box-sizing: border-box;
+            transition: background 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .countdown-container {
-            text-align: center;
-            background: var(--card-bg);
-            padding: 50px 40px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(255, 133, 162, 0.1);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border-color);
-            z-index: 10;
-            max-width: 550px;
+        /* PANTALLA DE INICIO (OVERLAY) */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            box-sizing: border-box;
+            height: 100%;
+            background: radial-gradient(circle, #fff5f5 0%, #ffe5ec 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .intro-btn {
+            background: linear-gradient(135deg, #ff85a2, #ffb3c1);
+            border: 3px solid #fff;
+            padding: 16px 50px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(255, 133, 162, 0.4);
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            animation: pulse 1.8s infinite ease-in-out;
+            transition: transform 0.3s ease;
+        }
+
+        .intro-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .intro-title {
+            color: var(--text-main);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* MODO ÉPICO / AMOR: Fondo más profundo pero manteniendo la estética rosa/pastel */
+        body.epic-mode {
+            background: radial-gradient(circle, #ffe5ec 0%, #ffc2d1 100%);
         }
 
         .decor-emoji {
             font-size: 1.8rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            margin-top: 10px;
             display: inline-block;
             animation: pulse 2s infinite ease-in-out;
-        }
-
-        /* Estilos aplicados al gatito */
-        .cat-image {
-            width: 160px;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin: 5px 0 25px 0;
-            border: 4px solid #fff0f2;
-            box-shadow: 0 8px 20px rgba(255, 133, 162, 0.15);
         }
 
         h1 {
             color: var(--text-main);
             font-size: 2.2rem;
             font-weight: 600;
-            margin: 0 0 12px 0;
+            margin: 0 0 10px 0;
             letter-spacing: -0.5px;
+            text-align: center;
             line-height: 1.2;
+            transition: color 0.5s ease;
+        }
+
+        body.epic-mode h1 {
+            color: #4a3b32;
         }
 
         p.subtitle {
             color: var(--text-sub);
             font-size: 1.05rem;
-            margin: 0 0 20px 0;
+            margin: 0 0 30px 0;
             font-weight: 400;
             line-height: 1.5;
+            text-align: center;
+            max-width: 500px;
+            transition: color 0.5s ease;
         }
 
-        .timer-grid {
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 800px;
+            width: 100%;
+            transition: opacity 0.8s ease, filter 0.8s ease;
+            z-index: 5;
         }
 
-        .time-box {
+        .grid-container.blur {
+            opacity: 0.15;
+            filter: blur(5px);
+            pointer-events: none;
+        }
+
+        .coupon-container {
+            perspective: 1000px; 
+            height: 260px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: var(--envelope-color);
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            box-shadow: 0 8px 24px rgba(255, 133, 162, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .envelope.shake {
+            animation: shakeEnvelope 0.5s ease-in-out;
+        }
+
+        @keyframes shakeEnvelope {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            20%, 60% { transform: scale(1.05) rotate(-4deg); box-shadow: 0 12px 25px rgba(255,133,162,0.25); }
+            40%, 80% { transform: scale(1.05) rotate(4deg); box-shadow: 0 12px 25px rgba(255,133,162,0.25); }
+        }
+
+        .coupon-container:hover:not(.open):not(.disabled) .envelope {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(255, 133, 162, 0.3);
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 115px solid transparent;
+            border-right: 115px solid transparent;
+            border-top: 90px solid var(--flap-color);
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+            z-index: 3;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        /* ESTADO ABIERTO PREESTABLECIDO */
+        .coupon-container.open .flap {
+            transform: rotateX(180deg);
+            transition: transform 0.4s ease;
+            z-index: 1;
+        }
+
+        /* ESTADO INHABILITADO (DISABLED) */
+        .coupon-container.disabled {
+            pointer-events: none; 
+        }
+        .coupon-container.disabled .envelope {
+            filter: grayscale(0.9) opacity(0.6); 
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 800px) {
+            .flap {
+                border-left-width: calc(100vw / 6 - 18px);
+                border-right-width: calc(100vw / 6 - 18px);
+            }
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            h1 { font-size: 1.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            .flap {
+                border-left-width: calc(100vw / 2 - 38px);
+                border-right-width: calc(100vw / 2 - 38px);
+            }
+        }
+
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-left: 115px solid var(--envelope-inside);
+            border-right: 115px solid var(--envelope-inside);
+            border-bottom: 140px solid transparent;
+            border-top: 120px solid transparent;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .envelope-text {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1rem;
+            z-index: 4;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
+        }
+
+        .card {
+            position: absolute;
+            bottom: 15px;
+            left: 6%;
+            width: 88%;
+            height: 90%;
+            border-radius: 14px;
+            z-index: 1;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .centered-deck-container {
+            position: fixed;
+            z-index: 999;
+            transform-style: preserve-3d;
+            perspective: 1500px;
+            transition: 
+                transform 1.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                left 1.6s ease, 
+                top 1.6s ease, 
+                width 1.6s ease, 
+                height 1.6s ease,
+                box-shadow 0.8s ease; 
+            box-shadow: 0 0 0 0 rgba(0,0,0,0);
+            border-radius: 20px;
+        }
+
+        .centered-deck-container.arrived-blue {
+            box-shadow: var(--epic-glow-blue);
+        }
+
+        /* ANIMACIÓN EXTRAVAGANTE DE LA ÚLTIMA CARTA (GOLD) */
+        .centered-deck-container.arrived-gold {
+            box-shadow: var(--epic-glow-gold), 0 0 60px 20px rgba(255, 235, 59, 0.4);
+            animation: ultimateCardPulse 1.2s infinite ease-in-out alternate;
+        }
+
+        @keyframes ultimateCardPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1.65) rotate(0deg);
+                box-shadow: var(--epic-glow-gold), 0 0 40px 10px rgba(255, 215, 0, 0.3);
+            }
+            100% {
+                transform: translate(-50%, -52%) scale(1.72) rotate(1deg);
+                box-shadow: var(--epic-glow-gold), 0 0 80px 25px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        /* Partículas orbitales */
+        .orbital-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 998;
+            font-size: 1.5rem;
+            animation: orbitAndFade 2s infinite linear;
+        }
+
+        @keyframes orbitAndFade {
+            0% {
+                transform: translate(0, 0) scale(0.5) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(1.3) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .page-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 20px; 
+            box-sizing: border-box;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.2), opacity 0.8s ease;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 20px;
+            box-sizing: border-box;
+            padding: 8px; 
+            box-shadow: 0 10px 30px rgba(255, 133, 162, 0.15), inset 0 0 10px rgba(255,255,255,0.8);
+            backface-visibility: hidden;
+        }
+
+        .page-card.rarity-blue .card-front {
+            background: var(--card-bg-blue);
+            border: 3px solid var(--card-border-blue);
+        }
+
+        .page-card.rarity-gold .card-front {
+            background: var(--card-bg-gold);
+            border: 3px solid var(--card-border-gold);
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px; 
+            border: 1px solid rgba(0, 0, 0, 0.05); 
+        }
+
+        .card-caption-below {
+            position: absolute;
+            top: calc(100% + 14px); 
+            left: -10px;
+            right: -10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(255, 133, 162, 0.1);
+            line-height: 1.4;
+            transform: translateZ(1px); 
+            pointer-events: none;
+        }
+
+        .page-card.revealed .card-caption-below {
+            display: none;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: #ffffff;
+            border: 4px solid var(--border-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 18px 5px;
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #fff0f2;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
+            justify-content: center;
+            color: var(--text-main);
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(255, 133, 162, 0.15);
+            overflow: hidden;
         }
 
-        .number {
-            font-size: 2.4rem;
-            font-weight: 300;
-            color: var(--accent-color);
-            line-height: 1;
-            margin-bottom: 6px;
+        .card-back::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, rgba(255,133,162,0) 0%, rgba(255,133,162,0.15) 50%, rgba(255,133,162,0) 100%);
+            animation: holoShine 3s infinite;
         }
 
-        .label {
-            font-size: 0.7rem;
+        @keyframes holoShine {
+            0% { transform: translate(-100%, -100%); }
+            100% { transform: translate(100%, 100%); }
+        }
+
+        .card-back .gift-icon {
+            font-size: 3.2rem;
+            margin-bottom: 12px;
+            animation: pulseGift 1.5s infinite;
+        }
+
+        .card-back .prize-text {
+            font-size: 1.15rem;
             text-transform: uppercase;
-            color: var(--text-sub);
-            letter-spacing: 1.5px;
-            font-weight: 500;
+            letter-spacing: -0.2px;
+            color: var(--text-main);
+        }
+
+        @keyframes pulseGift {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,133,162,0.2)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 12px rgba(255,133,162,0.5)); }
+        }
+
+        .page-card.revealed {
+            transform: rotateY(180deg) !important;
+            transition: transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .prize-btn {
+            position: fixed;
+            top: calc(50% + 250px); 
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.2);
+            background: linear-gradient(135deg, #ff85a2, #ffb3c1);
+            border: 3px solid #fff;
+            padding: 14px 40px;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(255, 133, 162, 0.3);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            cursor: pointer;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease, visibility 0.5s, background 0.3s ease;
+        }
+
+        .prize-btn.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .prize-btn.claim-style {
+            background: linear-gradient(135deg, #a2d2ff, #bde0fe);
+            box-shadow: 0 8px 25px rgba(162, 210, 255, 0.4);
+            color: #4a3b32;
+        }
+
+        .prize-btn:hover {
+            transform: translate(-50%, -55%) scale(1.05);
         }
 
         @keyframes pulse {
@@ -118,29 +497,12 @@
             100% { transform: scale(1); }
         }
 
-        @media (max-width: 500px) {
-            .countdown-container {
-                padding: 40px 20px;
-            }
-            .number {
-                font-size: 1.8rem;
-            }
-            h1 {
-                font-size: 1.7rem;
-            }
-            .cat-image {
-                width: 130px;
-                height: 130px;
-            }
-        }
-
-        /* --- LLUVIA DE AMOR Y CUMPLEAÑOS --- */
         .confetti {
             position: fixed;
-            z-index: 1;
+            z-index: 2500;
             pointer-events: none;
             animation: fall linear forwards;
-            font-size: 14px;
+            font-size: 16px;
             user-select: none;
         }
 
@@ -154,75 +516,497 @@
 </head>
 <body>
 
-    <div class="countdown-container">
-        <div class="decor-emoji">🎂💖✨</div>
-        <h1 id="mainTitle">Feliz cumple mi amoooooooor</h1>
-        <p class="subtitle">Tienes que esperar para ver tus sorpresas de cumpleeeee!!!! 🎁💘</p>
-        
-        <img class="cat-image" src="https://lh3.googleusercontent.com/d/1-rsn5V0dsPYov0TqqgPms1EtIl9N2vhz" alt="Imagen de cumpleaños">
-
-        <div class="timer-grid">
-            <div class="time-box">
-                <span class="number" id="days">00</span>
-                <span class="label">Días</span>
-            </div>
-            <div class="time-box">
-                <span class="number" id="hours">00</span>
-                <span class="label">Horas</span>
-            </div>
-            <div class="time-box">
-                <span class="number" id="minutes">00</span>
-                <span class="label">Min</span>
-            </div>
-            <div class="time-box">
-                <span class="number" id="seconds">00</span>
-                <span class="label">Seg</span>
-            </div>
-        </div>
+    <div id="introOverlay" class="intro-overlay">
+        <div class="intro-title">Calendario advento de cumpleañoooos 🐾🎈</div>
+        <button class="intro-btn" onclick="startExperience()">Comenzar 💖</button>
     </div>
 
+    <div class="decor-emoji">🎂💖✨</div>
+    <h1>Calendario advento de cumpleañoooos 🐾🃏</h1>
+    <p class="subtitle">Cada sobre contiene algunos de nuestros recuerdos y puedes encontrar una carta premiadaaaaa! Pero recuerda , solo 1 sobre por dia!</p>
+
+    <div id="grid" class="grid-container"></div>
+
+    <div id="prizeButton" class="prize-btn" onclick="handlePrizeButtonClick()">Ver premio 💝</div>
+
     <script>
-        // 1. CONFIGURACIÓN DEL TIEMPO OBJETIVO ("MAÑANA A LAS 6:00 PM")
-        const targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() + 1); 
-        targetDate.setHours(18, 0, 0, 0); 
+        const TOTAL_PAGES = 5;
+        let currentCenteredDeck = null;
+        let isPrizeRevealed = false; 
+        let orbitalInterval = null; 
 
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const difference = targetDate.getTime() - now;
+        // =====================================================================
+        // SINTETIZADOR DE AUDIO ALGORÍTMICO PROGRESIVO
+        // =====================================================================
+        let audioCtx = null;
 
-            if (difference <= 0) {
-                document.getElementById('days').innerText = "00";
-                document.getElementById('hours').innerText = "00";
-                document.getElementById('minutes').innerText = "00";
-                document.getElementById('seconds').innerText = "00";
-                document.getElementById('mainTitle').innerText = "¡Feliz Cumpleaños! 💕🎉";
-                return;
+        async function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-
-            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((difference % (1000 * 60)) / 1000);
-
-            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
-            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
-            document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
-            document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+            if (audioCtx && audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            }
         }
 
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+        async function startExperience() {
+            await initAudio();
+            
+            const overlay = document.getElementById('introOverlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.visibility = 'hidden'; }, 800);
+            
+            scheduler();
+        }
 
-        // 2. GENERADOR MINIMALISTA DE ELEMENTOS FLOTANTES (CORAZONES Y ESTRELLAS)
+        const CHORDS = [
+            [261.63, 329.63, 392.00, 523.25], // Do Mayor (C)
+            [220.00, 329.63, 440.00, 523.25], // La menor (Am)
+            [174.61, 261.63, 349.23, 440.00], // Fa Mayor (F)
+            [196.00, 293.66, 392.00, 587.33]  // Sol Mayor (G)
+        ];
+        
+        let currentChordIndex = 0;
+        let stepCount = 0;
+
+        function scheduler() {
+            if (!audioCtx) return;
+
+            if (stepCount % 8 === 0) {
+                currentChordIndex = (currentChordIndex + 1) % CHORDS.length;
+            }
+
+            const chord = CHORDS[currentChordIndex];
+            let note;
+            if (stepCount % 4 === 0) {
+                note = chord[0]; 
+            } else {
+                note = chord[Math.floor(Math.random() * chord.length)]; 
+            }
+
+            playMelodyNote(note);
+            stepCount++;
+
+            const humanizedTempo = 550 + (Math.random() * 80); 
+            setTimeout(scheduler, humanizedTempo);
+        }
+
+        function playMelodyNote(freq) {
+            if (!audioCtx || audioCtx.state === 'suspended') return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine'; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.003, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.4);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.4);
+        }
+
+        function playPopSound() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
+        }
+
+        // NUEVO SONIDO DEL PREMIO: Acorde de arpa dulce, ultra armónico y cinematográfico
+        function playFanfareSound() {
+            if (!audioCtx) return;
+            
+            // Frecuencias exactas físicamente consonantes (Do, Mi, Sol, Do octavado)
+            const notes = [261.63, 329.63, 392.00, 523.25];
+            const now = audioCtx.currentTime;
+
+            notes.forEach((freq, index) => {
+                // Pequeño retardo asincrónico por nota (30ms) para simular el rasgueo manual de cuerdas
+                setTimeout(() => {
+                    if (!audioCtx || audioCtx.state === 'suspended') return;
+
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    // Sine mantiene ondas cristalinas libres de distorsión digital o ruidos agresivos
+                    osc.type = 'sine'; 
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    
+                    // Ataque envolvente (Fade-in suave) y desvanecimiento progresivo largo (2.8 segundos)
+                    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.07, audioCtx.currentTime + 0.1); 
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.8);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 2.9);
+                }, index * 30); 
+            });
+        }
+
+        // =====================================================================
+        // CONFIGURACIÓN DE IMÁGENES, DESCRIPCIONES Y ESTADOS DE LOS SOBRES
+        // =====================================================================
+        const SOBRES_IMAGENES = {
+            sobre1: {
+                disabled: false, opened: false,   
+                cartas: [
+                    { id: "1o4Leu0HDmXVtxx7kmXwET2gw_Y7KNdzR", desc: "¡Una Brenda feliz lista para su concierto! 🎤🎶" },
+                    { id: "1gidYm5cy2JOD9q4mJbuhzZwR31Z4Efv0", desc: "En una cena de cumple ricaaa! 🎂🥂" },
+                    { id: "13DJdWsAmck1y9_GUC7OdSqL5A4mNnuj5", desc: "Con una cebolla y un aguacate! 🧅🥑" },
+                    { id: "1oxb4m520yBV1GdrBs9lICnejOp-BTFM4", desc: "¡Juntos en un bañoooo! 👩‍❤️‍👨🧼" },
+                    { id: "1nVAxgd8nzDpONQBObM0R5ul6JJtl2SEc", desc: "👑 ¡Woooow un Milo de la suerte dorado, acabas de ganar!!! ⭐🏆" }
+                ]
+            },
+            sobre2: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre3: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre4: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre5: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre6: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre7: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre8: {
+               disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            },
+            sobre9: {
+                disabled: true, opened: false,
+                cartas: [
+                    { id: "ID_DRIVE", desc: "Carta 1" }, { id: "ID_DRIVE", desc: "Carta 2" },
+                    { id: "ID_DRIVE", desc: "Carta 3" }, { id: "ID_DRIVE", desc: "Carta 4" },
+                    { id: "ID_DRIVE", desc: "Carta Dorada" }
+                ]
+            }
+        };
+
+        function getGoogleDriveUrl(id) {
+            return `https://lh3.googleusercontent.com/d/${id}=w500`;
+        }
+
+        function renderGrid() {
+            const gridContainer = document.getElementById('grid');
+            gridContainer.innerHTML = ''; 
+
+            for (let i = 1; i <= 9; i++) {
+                const infoSobre = SOBRES_IMAGENES[`sobre${i}`];
+                let clasesExtra = '';
+                let textoEtiqueta = `Sobre dia ${i} 🎁`;
+                let eventoClick = `onclick="initiateEpicOpening(this.parentElement, ${i})"`;
+
+                if (infoSobre) {
+                    if (infoSobre.disabled) {
+                        clasesExtra += ' disabled';
+                        textoEtiqueta = `Bloqueado 🔒`;
+                        eventoClick = ''; 
+                    } else if (infoSobre.opened) {
+                        clasesExtra += ' open';
+                        textoEtiqueta = `Abierto 🔓`;
+                        eventoClick = ''; 
+                    }
+                }
+
+                const sobreHTML = `
+                    <div class="coupon-container${clasesExtra}">
+                        <div class="envelope" ${eventoClick}>
+                            <div class="flap"></div>
+                            <div class="envelope-text">${textoEtiqueta}</div>
+                            <div class="card"></div>
+                            <div class="envelope-front"></div>
+                        </div>
+                    </div>
+                `;
+                gridContainer.insertAdjacentHTML('beforeend', sobreHTML);
+            }
+        }
+
+        window.onload = function() {
+            renderGrid(); 
+            triggerConfettiRain(40);
+            setInterval(createLoveElements, 350);
+        };
+
+        async function initiateEpicOpening(envelopeContainer, envelopeId) {
+            if (currentCenteredDeck) return;
+
+            await initAudio();
+            setTimeout(() => { playPopSound(); }, 10);
+
+            const envelope = envelopeContainer.querySelector('.envelope');
+            const cardSlot = envelopeContainer.querySelector('.card');
+            const rect = cardSlot.getBoundingClientRect();
+
+            envelope.classList.add('shake');
+            
+            setTimeout(() => {
+                envelope.classList.remove('shake');
+                envelopeContainer.classList.add('open'); 
+
+                const deckContainer = document.createElement('div');
+                deckContainer.className = 'centered-deck-container';
+                deckContainer.style.width = rect.width + 'px';
+                deckContainer.style.height = rect.height + 'px';
+                deckContainer.style.left = rect.left + 'px';
+                deckContainer.style.top = rect.top + 'px';
+                deckContainer.style.transform = 'scale(1) rotate(0deg)';
+                document.body.appendChild(deckContainer);
+                currentCenteredDeck = deckContainer;
+                isPrizeRevealed = false; 
+
+                for (let i = 1; i <= TOTAL_PAGES; i++) {
+                    const pageCard = document.createElement('div');
+                    
+                    if (i === TOTAL_PAGES) {
+                        pageCard.className = 'page-card rarity-gold'; 
+                    } else {
+                        pageCard.className = 'page-card rarity-blue'; 
+                    }
+                    
+                    pageCard.style.zIndex = (TOTAL_PAGES + 1) - i; 
+
+                    const front = document.createElement('div'); front.className = 'card-front';
+                    const img = document.createElement('img');
+                    
+                    const sobreObj = SOBRES_IMAGENES[`sobre${envelopeId}`];
+                    const targetObjeto = (sobreObj && sobreObj.cartas) ? sobreObj.cartas[i - 1] : null;
+
+                    if (targetObjeto && targetObjeto.id && !targetObjeto.id.includes("ID_DRIVE")) {
+                        img.src = getGoogleDriveUrl(targetObjeto.id);
+                    } else {
+                        img.src = `https://cataas.com/cat/funny?t=${envelopeId}${i}&width=300`;
+                    }
+                    img.alt = `Sobre dia ${i}`;
+                    front.appendChild(img);
+                    pageCard.appendChild(front);
+
+                    if (targetObjeto && targetObjeto.desc) {
+                        const caption = document.createElement('div');
+                        caption.className = 'card-caption-below';
+                        caption.innerText = targetObjeto.desc;
+                        pageCard.appendChild(caption);
+                    }
+
+                    const back = document.createElement('div');
+                    back.className = 'card-back';
+                    back.innerHTML = `
+                        <div class="gift-icon">💘🎁</div>
+                        <div class="prize-text" style="color: #4a3b32; font-family: inherit;">Vale por una cena romantica <br><span style="color:#ff85a2; font-size:0.9rem; font-family:monospace; font-weight:bold;">CÓDIGO: CENA${envelopeId}</span></div>
+                    `;
+                    pageCard.appendChild(back);
+                    deckContainer.appendChild(pageCard);
+                }
+
+                deckContainer.onclick = function(event) {
+                    nextCard(event, deckContainer, envelopeContainer, envelopeId);
+                };
+
+                setTimeout(() => {
+                    document.body.classList.add('epic-mode');
+                    document.getElementById('grid').classList.add('blur');
+                    
+                    deckContainer.style.left = '50%';
+                    deckContainer.style.top = '40%'; 
+                    deckContainer.style.transform = 'translate(-50%, -50%) scale(1.65) rotate(360deg)';
+                    
+                    setTimeout(() => {
+                        deckContainer.classList.add('arrived-blue');
+                    }, 1600);
+                }, 800); 
+
+            }, 500); 
+        }
+
+        function spawnOrbitalParticle(container) {
+            const particles = ['✨', '💖', '⭐', '🌸', '👑'];
+            const p = document.createElement('div');
+            p.className = 'orbital-particle';
+            p.innerText = particles[Math.floor(Math.random() * particles.length)];
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 120 + Math.random() * 100;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+            
+            p.style.setProperty('--x', `${x}px`);
+            p.style.setProperty('--y', `${y}px`);
+            
+            p.style.left = '50%';
+            p.style.top = '50%';
+            
+            container.appendChild(p);
+            setTimeout(() => { p.remove(); }, 2000);
+        }
+
+        function nextCard(event, deckContainer, envelopeContainer, envelopeId) {
+            event.stopPropagation();
+
+            const remainingCards = deckContainer.querySelectorAll('.page-card');
+            if (remainingCards.length === 0) return;
+            if (remainingCards.length === 1) return;
+
+            const topmostCard = remainingCards[0];
+
+            if (remainingCards.length === 2) {
+                deckContainer.classList.remove('arrived-blue');
+                deckContainer.classList.add('arrived-gold');
+
+                // Ejecución del rasgueo armónico de arpa
+                playFanfareSound();
+
+                orbitalInterval = setInterval(() => {
+                    spawnOrbitalParticle(deckContainer);
+                }, 80);
+
+                setTimeout(() => {
+                    triggerConfettiRain(30); 
+                    
+                    const btn = document.getElementById('prizeButton');
+                    btn.innerText = "Ver premio 🎁";
+                    btn.classList.remove('claim-style');
+                    btn.classList.add('show');
+                }, 400);
+            } else {
+                playPopSound();
+            }
+
+            topmostCard.style.transform = 'translate(40px, -60px) rotate(20deg) scale(0.8)';
+            topmostCard.style.opacity = '0.5';
+
+            setTimeout(() => {
+                topmostCard.style.transition = 'transform 0.8s ease-in, opacity 0.6s ease';
+                topmostCard.style.transform = `translate(0, ${window.innerHeight}px) rotate(-10deg) scale(0.3)`;
+                topmostCard.style.opacity = '0';
+            }, 150);
+
+            if (remainingCards.length === TOTAL_PAGES) {
+                if (SOBRES_IMAGENES[`sobre${envelopeId}`]) {
+                    SOBRES_IMAGENES[`sobre${envelopeId}`].opened = true;
+                }
+                envelopeContainer.classList.remove('open');
+            }
+
+            setTimeout(() => { topmostCard.remove(); }, 950);
+        }
+
+        async function handlePrizeButtonClick() {
+            if (!currentCenteredDeck) return;
+            
+            const remainingCards = currentCenteredDeck.querySelectorAll('.page-card');
+            if (remainingCards.length !== 1) return;
+            
+            const finalCard = remainingCards[0];
+            const btn = document.getElementById('prizeButton');
+
+            if (!isPrizeRevealed) {
+                if (orbitalInterval) {
+                    clearInterval(orbitalInterval);
+                    orbitalInterval = null;
+                }
+
+                await initAudio();
+
+                finalCard.classList.add('revealed'); 
+                triggerConfettiRain(60); 
+                
+                isPrizeRevealed = true;
+                btn.innerText = "Canjear regalito 🌸";
+                btn.classList.add('claim-style');
+            } else {
+                closePrizeScene();
+            }
+        }
+
+        function closePrizeScene() {
+            if (orbitalInterval) {
+                clearInterval(orbitalInterval);
+                orbitalInterval = null;
+            }
+
+            document.getElementById('prizeButton').classList.remove('show');
+            document.getElementById('grid').classList.remove('blur');
+            document.body.classList.remove('epic-mode');
+            
+            if (currentCenteredDeck) {
+                const deck = currentCenteredDeck;
+                deck.classList.remove('arrived-blue');
+                deck.classList.remove('arrived-gold');
+                deck.style.transform = 'translate(-50%, 100vh) scale(0) rotate(720deg)';
+                deck.style.opacity = '0';
+                setTimeout(() => { 
+                    deck.remove(); 
+                    renderGrid(); 
+                }, 1200);
+                currentCenteredDeck = null;
+            }
+        }
+
         function createLoveElements() {
-            const elements = ['💖', '💕', '✨', '🌸', '💘', '🍬'];
+            const elements = ['💖', '💕', '✨', '🌸', '💘', '🍬', '🐾'];
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
             confetti.innerText = elements[Math.floor(Math.random() * elements.length)];
             
             confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.fontSize = (Math.random() * 10 + 12) + 'px';
+            confetti.style.fontSize = (Math.random() * 10 + 14) + 'px';
             
             const fallDuration = Math.random() * 4 + 5; 
             confetti.style.animationDuration = fallDuration + 's'; 
@@ -234,7 +1018,11 @@
             }, fallDuration * 1000);
         }
 
-        setInterval(createLoveElements, 300);
+        function triggerConfettiRain(amount) {
+            for (let i = 0; i < amount; i++) {
+                setTimeout(createLoveElements, Math.random() * 1000);
+            }
+        }
     </script>
 </body>
 </html>
